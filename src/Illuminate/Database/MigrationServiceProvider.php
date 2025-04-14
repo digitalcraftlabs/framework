@@ -33,6 +33,7 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
         'MigrateRollback' => RollbackCommand::class,
         'MigrateStatus' => StatusCommand::class,
         'MigrateMake' => MigrateMakeCommand::class,
+        'SchemaPrune' => SchemaPruneCommand::class,
     ];
 
     /**
@@ -210,6 +211,16 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->singleton(StatusCommand::class, function ($app) {
             return new StatusCommand($app['migrator']);
         });
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerSchemaPruneCommand()
+    {
+        $this->app->singleton(SchemaPruneCommand::class);
     }
 
     /**

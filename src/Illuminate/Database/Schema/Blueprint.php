@@ -630,6 +630,33 @@ class Blueprint
     }
 
     /**
+     * Indicate that the table should be soft dropped (renamed with timestamp).
+     *
+     * @param  int  $days  Days to keep the table before permanent deletion
+     * @return \Illuminate\Support\Fluent
+     */
+    public function softDrop($days = 30)
+    {
+        $timestamp = time();
+        $newName = 'old_' . $this->table . '_' . $timestamp;
+        
+        return $this->addCommand('rename', ['to' => $newName, 'soft_dropped_at' => $timestamp, 'days' => $days]);
+    }
+
+    /**
+     * Indicate that the table should be soft dropped if it exists.
+     *
+     * @param  int  $days  Days to keep the table before permanent deletion
+     * @return \Illuminate\Support\Fluent
+     */
+    public function softDropIfExists($days = 30)
+    {
+        if ($this->getConnection()->getSchemaBuilder()->hasTable($this->table)) {
+            return $this->softDrop($days);
+        }
+    }
+
+    /**
      * Specify the primary key(s) for the table.
      *
      * @param  string|array  $columns
